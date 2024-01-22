@@ -1,6 +1,3 @@
-import java.io.*;
-
-
 /* Grassland.java */
 
 /**
@@ -8,28 +5,30 @@ import java.io.*;
  *  carrots.  Descriptions of the methods you must implement appear below.  They
  *  include a constructor of the form
  *
- *      public Grassland(int i, int j, int starveTime);
+ *  public Grassland(int i, int j, int starveTime);
  *
  *  that creates an empty meadow having width i and height j, in which rabbits
  *  starve after starveTime timesteps.
  */
-
 public class Grassland 
 {
-
     /**
      *  Do not rename these constants.  WARNING:  if you change the numbers, you
      *  will need to recompile Test4.java.  Failure to do so will give you a very
      *  hard-to-find bug.
      */
 
-    public final static int EMPTY = 0, RABBIT = 1, FED = 2, CARROT = 3;
+    public final static int EMPTY = 0, RABBIT = 1, CARROT = 2;
 
     /**
      *  Define any variables associated with an Grassland object here.  These
      *  variables MUST be private.
      */
-    private int i, j, staverTime, meadow[][];
+    private int i, j, starveTime;
+    private int count_empty, count_rabbit, count_carrot;
+
+
+    private Piece Meadow[][];
 
     /**
      *  Grassland() is a constructor that creates an empty meadow having width i and
@@ -44,9 +43,9 @@ public class Grassland
         // Your solution here.
         this.i = i;
         this.j = j;
-        this.staverTime = starveTime;
+        this.starveTime = starveTime;
 
-        meadow = new int [i][j]; 
+        Meadow = new Piece[i][j];
         initialize();
     }
 
@@ -54,7 +53,7 @@ public class Grassland
     {
         for(int i = 0; i < this.i; i++)
             for(int j = 0; j < this.j; j++)
-                this.meadow[i][j] = EMPTY;
+                Meadow[i][j] = new Piece(EMPTY);
     }
 
     /**
@@ -87,7 +86,7 @@ public class Grassland
     public int starveTime() 
     {
         // Replace the following line with your solution.
-        return this.staverTime;
+        return this.starveTime;
     }
 
     /**
@@ -100,11 +99,11 @@ public class Grassland
     public void addCarrot(int x, int y) throws Exception
     {
         // Your solution here.
-        if ( ( x > this.i || x < 0  ) || (y > this.j || y < 0) ) throw new Exception("Invalid paramet");
+        if ( ( x >= this.i || x < 0  ) || (y >= this.j || y < 0) ) throw new Exception("Invalid parameter");
 
-        int position = this.meadow[x][y];
+        Piece position = this.Meadow[x][y];
 
-        this.meadow[x][y] = (position == EMPTY) ? CARROT : position; 
+        this.Meadow[x][y] = (position.getType() == EMPTY) ? new Carrots(CARROT) : position; 
     }
 
     /**
@@ -118,11 +117,11 @@ public class Grassland
     public void addRabbit(int x, int y) throws Exception
     {
         // Your solution here.
-        if ( ( x > this.i && x < 0  ) && (y > this.j && y < 0) ) throw new Exception("Invalid paramet");
+        if ( ( x >= this.i && x < 0  ) && (y >= this.j && y < 0) ) throw new Exception("Invalid paramet");
 
-        int position = this.meadow[x][y];
+        Piece position = this.Meadow[x][y];
 
-        this.meadow[x][y] = (position == EMPTY) ? RABBIT : position; 
+        this.Meadow[x][y] = (position.getType() == EMPTY) ? new Rabbit(RABBIT, 1) : position; 
 
     }
 
@@ -136,35 +135,74 @@ public class Grassland
     public int cellContents(int x, int y) 
     {
         // Replace the following line with your solution.
-        return this.meadow[x][y];
+        return this.Meadow[x][y].getType();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      *  timeStep() performs a simulation timestep 
      *  @return a meadow representing the elapse of one timestep.
      */
 
+
     public Grassland timeStep() 
     {
         // Replace the following line with your solution.
-        return new Grassland(100, 100, 5);
+
+        for(int j = 0; j < this.j; j++)
+        {
+            count_empty = 0; 
+            count_rabbit = 0; 
+            count_carrot = 0;
+            
+            for(int i = 0; i < this.i; i++)
+            {
+                countPieceNeighbor(Meadow[j][(i - 1) % this.i].getType(), i, j, );
+                countPieceNeighbor(Meadow[j][(i + 1) % this.i].getType(), i, j, );
+                countPieceNeighbor(Meadow[(j - 1) % this.j][i].getType(), i , j, );
+                countPieceNeighbor(Meadow[(j + 1) % this.j][i].getType(), i , j, );
+
+                countPieceNeighbor(Meadow[(j - 1) % this.j][(i + 1) % this.i].getType(), i, j, );
+                countPieceNeighbor(Meadow[(j + 1) % this.j][(i + 1) % this.i].getType(), i, j, );
+                countPieceNeighbor(Meadow[(j - 1) % this.j][(i - 1) % this.i].getType(), i, j, );
+                countPieceNeighbor(Meadow[(j + 1) % this.j][(i - 1) % this.i].getType(), i, j, );
+
+                if( this.Meadow[i][j].getType() == RABBIT )
+                {
+                    
+                }
+                else if( this.Meadow[i][j].getType() == CARROT )
+                    {
+
+                    }
+                    else //then is empty
+                    {
+
+                    }
+            }
+        }
+
+        return new Grassland(this.i, this.j, this.starveTime);
+    }
+    
+    public void countPieceNeighbor(int type, int x, int y)
+    {
+        switch (type) 
+        {
+            case EMPTY:
+                count_empty += 1;
+                break;
+            case RABBIT:
+                count_rabbit += 1;
+            case CARROT:
+                count_carrot += 1;
+                break;
+        }
     }
 
-    
-
+    /*
+    public void showInfo(int x, int y)
+    {
+        System.out.println(Meadow[x][y].toString() + " " + Piece.equalsTo(Meadow[0][0], Meadow[1][1]));
+    }
+    */
 }
