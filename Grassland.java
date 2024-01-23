@@ -28,7 +28,9 @@ public class Grassland
     private int count_empty, count_rabbit, count_carrot;
 
 
-    private Piece Meadow[][];
+    private static Piece Meadow[][];
+    private Piece MeadowShadow[][];
+
 
     /**
      *  Grassland() is a constructor that creates an empty meadow having width i and
@@ -51,8 +53,8 @@ public class Grassland
 
     public void initialize()
     {
-        for(int i = 0; i < this.i; i++)
-            for(int j = 0; j < this.j; j++)
+        for(int j = 0; j < this.j; j++)
+            for(int i = 0; i < this.i; i++)
                 Meadow[i][j] = new Piece(EMPTY);
     }
 
@@ -101,9 +103,9 @@ public class Grassland
         // Your solution here.
         if ( ( x >= this.i || x < 0  ) || (y >= this.j || y < 0) ) throw new Exception("Invalid parameter");
 
-        Piece position = this.Meadow[x][y];
+        Piece position = Meadow[x][y];
 
-        this.Meadow[x][y] = (position.getType() == EMPTY) ? new Carrots(CARROT) : position; 
+        Meadow[x][y] = (position.getType() == EMPTY) ? new Carrots(CARROT) : position; 
     }
 
     /**
@@ -119,9 +121,9 @@ public class Grassland
         // Your solution here.
         if ( ( x >= this.i && x < 0  ) && (y >= this.j && y < 0) ) throw new Exception("Invalid paramet");
 
-        Piece position = this.Meadow[x][y];
+        Piece position = Meadow[x][y];
 
-        this.Meadow[x][y] = (position.getType() == EMPTY) ? new Rabbit(RABBIT, 1) : position; 
+        Meadow[x][y] = (position.getType() == EMPTY) ? new Rabbit(RABBIT, 1) : position; 
 
     }
 
@@ -135,56 +137,56 @@ public class Grassland
     public int cellContents(int x, int y) 
     {
         // Replace the following line with your solution.
-        return this.Meadow[x][y].getType();
+        return Meadow[x][y].getType();
     }
 
+
+    public void copyMeadow(Piece meadow[][], Piece meadow2[][])
+    {
+        for(int j = 0; j < this.j; j++)
+            for(int i = 0; i < this.i; i++)
+                meadow2[i][j] = meadow[i][j];
+    }
     /**
      *  timeStep() performs a simulation timestep 
      *  @return a meadow representing the elapse of one timestep.
      */
 
-
-    public Grassland timeStep() 
+    public Piece[][] timeStep() throws Exception
     {
         // Replace the following line with your solution.
+        Piece positionCurrent;
+        MeadowShadow = new Piece[this.i][this.j];
+        copyMeadow(Meadow, MeadowShadow);
 
-        for(int j = 0; j < this.j; j++)
+        for(int y = 0; y < this.j; y++)
         {
             count_empty = 0; 
             count_rabbit = 0; 
             count_carrot = 0;
             
-            for(int i = 0; i < this.i; i++)
+            for(int x = 0; x < this.i; x++)
             {
-                countPieceNeighbor(Meadow[j][(i - 1) % this.i].getType(), i, j, );
-                countPieceNeighbor(Meadow[j][(i + 1) % this.i].getType(), i, j, );
-                countPieceNeighbor(Meadow[(j - 1) % this.j][i].getType(), i , j, );
-                countPieceNeighbor(Meadow[(j + 1) % this.j][i].getType(), i , j, );
-
-                countPieceNeighbor(Meadow[(j - 1) % this.j][(i + 1) % this.i].getType(), i, j, );
-                countPieceNeighbor(Meadow[(j + 1) % this.j][(i + 1) % this.i].getType(), i, j, );
-                countPieceNeighbor(Meadow[(j - 1) % this.j][(i - 1) % this.i].getType(), i, j, );
-                countPieceNeighbor(Meadow[(j + 1) % this.j][(i - 1) % this.i].getType(), i, j, );
-
-                if( this.Meadow[i][j].getType() == RABBIT )
-                {
-                    
-                }
-                else if( this.Meadow[i][j].getType() == CARROT )
-                    {
-
-                    }
-                    else //then is empty
-                    {
-
-                    }
+                positionCurrent = Meadow[x][y];
+ 
+                search_execute(Meadow[x][Math.floorMod((y - 1) , this.i)].getType(), x, Math.floorMod((y + 1) , this.i), positionCurrent);
+                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][y].getType(), Math.floorMod((x - 1) , this.j) , y, positionCurrent);
+                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][y].getType(), Math.floorMod((x + 1) , this.j) , y, positionCurrent);
+                search_execute(Meadow[x][Math.floorMod((y + 1), this.i)].getType(), x, Math.floorMod((y + 1), this.i) , positionCurrent);
+                
+                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][Math.floorMod((y + 1) , this.i)].getType(),Math.floorMod((x - 1) , this.j),Math.floorMod((y + 1) , this.i), positionCurrent);
+                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][Math.floorMod((y + 1) , this.i)].getType(),Math.floorMod((x + 1) , this.j),Math.floorMod((y + 1) , this.i), positionCurrent);
+                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][Math.floorMod((y - 1) , this.i)].getType(),Math.floorMod((x - 1) , this.j),Math.floorMod((y - 1) , this.i), positionCurrent);
+                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][Math.floorMod((y - 1) , this.i)].getType(),Math.floorMod((x + 1) , this.j),Math.floorMod((y - 1) , this.i), positionCurrent);
+            
             }
         }
 
-        return new Grassland(this.i, this.j, this.starveTime);
+        copyMeadow(MeadowShadow, Meadow);
+        return Meadow;
     }
     
-    public void countPieceNeighbor(int type, int x, int y)
+    public void search_execute(int type, int x, int y, Piece positionCurrent) throws Exception
     {
         switch (type) 
         {
@@ -193,9 +195,54 @@ public class Grassland
                 break;
             case RABBIT:
                 count_rabbit += 1;
+                break;
             case CARROT:
                 count_carrot += 1;
                 break;
+        }
+
+        if( positionCurrent.getType() == RABBIT )
+        {
+            if ( count_carrot + count_empty + count_rabbit == 8 )
+            {
+                Rabbit AuxRabbit = (Rabbit) positionCurrent;
+
+                if ( count_empty == 8 )
+                {
+                    AuxRabbit.incremetTime();
+                    if ( AuxRabbit.getTimeStep() > this.starveTime )
+                        Piece.toKill(x, y, MeadowShadow);
+                }
+                else if ( type == CARROT && count_carrot == 1 )
+                    {
+                        Piece.toKill(x, y, MeadowShadow);
+                    }
+            }
+        }
+
+        if ( positionCurrent.getType() == CARROT )
+        {
+            if ( count_rabbit > 1 )
+            {
+                if ( count_carrot + count_empty + count_rabbit == 8 )
+                    Piece.toReproduce(RABBIT, x, y, MeadowShadow);
+            }
+        }
+
+        if( positionCurrent.getType() == EMPTY )
+        {
+            if( count_carrot + count_empty + count_rabbit == 8 )
+            {
+                if ( count_carrot > 1 && (count_rabbit >= 0 && count_rabbit < 2) )
+                {
+                    Piece.toReproduce(CARROT, x, y, MeadowShadow);
+                }
+
+                if ( count_carrot > 1 &&  count_rabbit > 1 )
+                {
+                    Piece.toReproduce(RABBIT, x, y, MeadowShadow);
+                }
+            }
         }
     }
 

@@ -13,12 +13,12 @@ public  class Piece
         this.timeStep = timeStep;
     }
 
-    public static void toReproduce(int type, int posX, int posY, Object objectPiece[][])
+    public static void toReproduce(int type, int posX, int posY, Piece objectPiece[][])
     {
         objectPiece[posX][posY] = (type == Grassland.CARROT) ? new Carrots(Grassland.CARROT) : new Rabbit(Grassland.RABBIT, 1);
     }
 
-    public void toKill(int posX, int posY, Object objectPiece[][])
+    public static void toKill(int posX, int posY, Piece objectPiece[][])
     {
         objectPiece[posX][posY] = new Piece(Grassland.EMPTY);
     }
@@ -27,6 +27,7 @@ public  class Piece
     {
         return this.type;
     }
+    
     public void setType(int type)
     {
         this.type = type;
@@ -36,6 +37,7 @@ public  class Piece
     {
         return this.timeStep;
     }
+
     public void setTimeStep(int timeStep)
     {
         this.timeStep = timeStep;
@@ -53,10 +55,5 @@ public  class Piece
                 value += "Empty ";
             
         return value += "timestep: " + this.timeStep;     
-    }
-
-    public static Boolean equalsTo(Piece Piece1, Piece Piece2)
-    {
-        return Piece1.getClass().equals(Piece2.getClass());
     }
 }
