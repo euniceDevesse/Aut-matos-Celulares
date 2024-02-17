@@ -137,7 +137,7 @@ public class Simulation
       Piece[][] meadow = new Piece[i][j];
       while (true)                      
       {                                              // Loop forever
-        Thread.sleep(1000);                // Wait one second (1000 milliseconds)
+        Thread.sleep(4000);                // Wait one second (1000 milliseconds)
         draw(graphics, mea);                       // Draw the current meadow
         //  For fun, you might wish to change the delay in the next line.
         //  If you make it too short, though, the graphics won't work properly.

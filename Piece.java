@@ -27,10 +27,10 @@ public  class Piece
     {
         return this.type;
     }
-    
+
     public void setType(int type)
     {
-        this.type = type;
+        this.type += type;
     }
 
     public int getTimeStep()
@@ -38,9 +38,9 @@ public  class Piece
         return this.timeStep;
     }
 
-    public void setTimeStep(int timeStep)
+    public void setTimeStep()
     {
-        this.timeStep = timeStep;
+        this.timeStep += 1;
     }
 
     public String toString()

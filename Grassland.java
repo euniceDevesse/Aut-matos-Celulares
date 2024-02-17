@@ -28,7 +28,7 @@ public class Grassland
     private int count_empty, count_rabbit, count_carrot;
 
 
-    private static Piece Meadow[][];
+    private Piece Meadow[][];
     private Piece MeadowShadow[][];
 
 
@@ -161,84 +161,85 @@ public class Grassland
 
         for(int y = 0; y < this.j; y++)
         {
-            count_empty = 0; 
-            count_rabbit = 0; 
-            count_carrot = 0;
             
             for(int x = 0; x < this.i; x++)
             {
+                this.count_empty = 0; 
+                this.count_rabbit = 0; 
+                this.count_carrot = 0; 
+                
                 positionCurrent = Meadow[x][y];
  
-                search_execute(Meadow[x][Math.floorMod((y - 1) , this.i)].getType(), x, Math.floorMod((y + 1) , this.i), positionCurrent);
-                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][y].getType(), Math.floorMod((x - 1) , this.j) , y, positionCurrent);
-                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][y].getType(), Math.floorMod((x + 1) , this.j) , y, positionCurrent);
-                search_execute(Meadow[x][Math.floorMod((y + 1), this.i)].getType(), x, Math.floorMod((y + 1), this.i) , positionCurrent);
-                
-                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][Math.floorMod((y + 1) , this.i)].getType(),Math.floorMod((x - 1) , this.j),Math.floorMod((y + 1) , this.i), positionCurrent);
-                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][Math.floorMod((y + 1) , this.i)].getType(),Math.floorMod((x + 1) , this.j),Math.floorMod((y + 1) , this.i), positionCurrent);
-                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][Math.floorMod((y - 1) , this.i)].getType(),Math.floorMod((x - 1) , this.j),Math.floorMod((y - 1) , this.i), positionCurrent);
-                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][Math.floorMod((y - 1) , this.i)].getType(),Math.floorMod((x + 1) , this.j),Math.floorMod((y - 1) , this.i), positionCurrent);
-            
+                search_execute(Meadow[x][Math.floorMod((y - 1) , this.i)].getType(), x, Math.floorMod((y + 1) , this.i), positionCurrent, x, y);
+                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][y].getType(), Math.floorMod((x - 1) , this.j) , y, positionCurrent, x, y);
+                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][y].getType(), Math.floorMod((x + 1) , this.j) , y, positionCurrent, x, y);                
+                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][Math.floorMod((y + 1) , this.i)].getType(),Math.floorMod((x - 1) , this.j),Math.floorMod((y + 1) , this.i), positionCurrent, x, y);
+                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][Math.floorMod((y + 1) , this.i)].getType(),Math.floorMod((x + 1) , this.j),Math.floorMod((y + 1) , this.i), positionCurrent, x, y);
+                search_execute(Meadow[Math.floorMod((x - 1) , this.j)][Math.floorMod((y - 1) , this.i)].getType(),Math.floorMod((x - 1) , this.j),Math.floorMod((y - 1) , this.i), positionCurrent, x, y);
+                search_execute(Meadow[Math.floorMod((x + 1) , this.j)][Math.floorMod((y - 1) , this.i)].getType(),Math.floorMod((x + 1) , this.j),Math.floorMod((y - 1) , this.i), positionCurrent, x, y);
+                search_execute(Meadow[x][Math.floorMod((y + 1), this.i)].getType(), x, Math.floorMod((y + 1), this.i) , positionCurrent, x, y);
             }
         }
 
         copyMeadow(MeadowShadow, Meadow);
         return Meadow;
     }
+
+    /* search_execute() search neighbor and execute operation
+     * 
+     */
     
-    public void search_execute(int type, int x, int y, Piece positionCurrent) throws Exception
+    public void search_execute(int type, int x, int y, Piece positionCurrent, int correntX, int correntY) throws Exception
     {
-        switch (type) 
+        switch (type)
         {
             case EMPTY:
-                count_empty += 1;
+                this.count_empty += 1;
                 break;
             case RABBIT:
-                count_rabbit += 1;
+                this.count_rabbit += 1;
                 break;
             case CARROT:
-                count_carrot += 1;
+                this.count_carrot += 1;
                 break;
         }
 
         if( positionCurrent.getType() == RABBIT )
         {
-            if ( count_carrot + count_empty + count_rabbit == 8 )
+            if ( this.count_carrot + this.count_empty + this.count_rabbit == 8 )
             {
-                Rabbit AuxRabbit = (Rabbit) positionCurrent;
-
-                if ( count_empty == 8 )
+                if ( this.count_empty == 8 || count_carrot == 0 )
                 {
-                    AuxRabbit.incremetTime();
-                    if ( AuxRabbit.getTimeStep() > this.starveTime )
-                        Piece.toKill(x, y, MeadowShadow);
+                    MeadowShadow[correntX][correntY].setTimeStep();
+                    if ( MeadowShadow[correntX][correntY].getTimeStep() > this.starveTime )
+                        Piece.toKill(correntX, correntY, MeadowShadow);
                 }
-                else if ( type == CARROT && count_carrot == 1 )
-                    {
-                        Piece.toKill(x, y, MeadowShadow);
-                    }
+            }
+            if ( type == CARROT  )
+            {
+                Piece.toKill(x, y, MeadowShadow);
             }
         }
 
         if ( positionCurrent.getType() == CARROT )
         {
-            if ( count_rabbit > 1 )
+            if ( this.count_rabbit > 1 )
             {
-                if ( count_carrot + count_empty + count_rabbit == 8 )
+                if ( this.count_carrot + this.count_empty + this.count_rabbit == 8 )
                     Piece.toReproduce(RABBIT, x, y, MeadowShadow);
             }
         }
 
         if( positionCurrent.getType() == EMPTY )
         {
-            if( count_carrot + count_empty + count_rabbit == 8 )
+            if( this.count_carrot + this.count_empty + this.count_rabbit == 8 )
             {
-                if ( count_carrot > 1 && (count_rabbit >= 0 && count_rabbit < 2) )
+                if ( this.count_carrot > 1 && (this.count_rabbit >= 0 && this.count_rabbit < 2) )
                 {
                     Piece.toReproduce(CARROT, x, y, MeadowShadow);
                 }
 
-                if ( count_carrot > 1 &&  count_rabbit > 1 )
+                if ( this.count_carrot > 1 &&  this.count_rabbit > 1 )
                 {
                     Piece.toReproduce(RABBIT, x, y, MeadowShadow);
                 }
@@ -246,10 +247,4 @@ public class Grassland
         }
     }
 
-    /*
-    public void showInfo(int x, int y)
-    {
-        System.out.println(Meadow[x][y].toString() + " " + Piece.equalsTo(Meadow[0][0], Meadow[1][1]));
-    }
-    */
 }

@@ -6,13 +6,4 @@ public class Rabbit extends Piece
         super(type, timeStep);
     }
 
-    public void toEat()
-    {
-        setTimeStep(1);
-    }
-
-    public void incremetTime()
-    {
-        setTimeStep(getTimeStep() + 1);
-    }
 }
